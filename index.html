@@ -1,0 +1,1206 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MPI Matematika Kelas IX - Analisis Data</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts Inter & Poppins -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Canvas Confetti Library for Certificate Celebration -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        heading: ['Poppins', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            500: '#0284c7',
+                            600: '#0369a1',
+                            700: '#075985',
+                            800: '#0c4a6e',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            user-select: none; /* Ideal for IFP / Touch Screen */
+            touch-action: manipulation;
+            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+        }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .glass-dark {
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 8px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.05);
+            border-radius: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+
+        @keyframes pulse-subtle {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.03); }
+        }
+
+        .pulse-btn {
+            animation: pulse-subtle 3s infinite ease-in-out;
+        }
+
+        /* Certificate Print Styling */
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            #printable-certificate, #printable-certificate * {
+                visibility: visible;
+            }
+            #printable-certificate {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                padding: 0;
+                background: white;
+            }
+        }
+    </style>
+</head>
+<body class="h-screen w-screen overflow-hidden flex flex-col text-slate-800">
+
+    <!-- HEADER / NAVIGATION BAR (Tampilan IFP Touch-Friendly) -->
+    <header class="h-20 bg-slate-900/90 text-white border-b border-slate-700/50 flex items-center justify-between px-6 z-20 shrink-0">
+        <div class="flex items-center space-x-4">
+            <div class="bg-gradient-to-tr from-sky-500 to-indigo-600 p-3 rounded-2xl shadow-lg">
+                <i class="fa-solid me-0 fa-chart-pie text-2xl text-white"></i>
+            </div>
+            <div>
+                <h1 class="font-heading font-extrabold text-xl md:text-2xl tracking-wide bg-clip-text text-transparent bg-gradient-to-r from-sky-400 to-indigo-300">
+                    MATEMATIKA IX: ANALISIS DATA
+                </h1>
+                <p class="text-xs text-slate-400 font-medium">Media Pembelajaran Interaktif (MPI) • Interactive Flat Panel Edition</p>
+            </div>
+        </div>
+
+        <!-- Navigation Buttons -->
+        <nav id="main-nav" class="hidden md:flex items-center space-x-2">
+            <button onclick="switchTab('tujuan')" id="nav-tujuan" class="nav-btn px-4 py-2.5 rounded-xl font-semibold text-sm transition flex items-center space-x-2 text-slate-300 hover:text-white hover:bg-slate-800">
+                <i class="fa-solid fa-bullseye text-sky-400"></i>
+                <span>Tujuan & Panduan</span>
+            </button>
+            <button onclick="switchTab('materi')" id="nav-materi" class="nav-btn px-4 py-2.5 rounded-xl font-semibold text-sm transition flex items-center space-x-2 text-slate-300 hover:text-white hover:bg-slate-800">
+                <i class="fa-solid fa-book-open text-emerald-400"></i>
+                <span>Rangkuman Materi</span>
+            </button>
+            <button onclick="switchTab('petualangan')" id="nav-petualangan" class="nav-btn px-4 py-2.5 rounded-xl font-semibold text-sm transition flex items-center space-x-2 text-slate-300 hover:text-white hover:bg-slate-800">
+                <i class="fa-solid fa-compass text-amber-400"></i>
+                <span>Ayo Berpetualang</span>
+            </button>
+            <button onclick="switchTab('hots')" id="nav-hots" class="nav-btn px-4 py-2.5 rounded-xl font-semibold text-sm transition flex items-center space-x-2 text-slate-300 hover:text-white hover:bg-slate-800">
+                <i class="fa-solid fa-brain text-purple-400"></i>
+                <span>Tantangan HOTS</span>
+            </button>
+            <button onclick="switchTab('refleksi')" id="nav-refleksi" class="nav-btn px-4 py-2.5 rounded-xl font-semibold text-sm transition flex items-center space-x-2 text-slate-300 hover:text-white hover:bg-slate-800">
+                <i class="fa-solid fa-award text-rose-400"></i>
+                <span>Refleksi & Sertifikat</span>
+            </button>
+            <button onclick="switchTab('pengembang')" id="nav-pengembang" class="nav-btn px-4 py-2.5 rounded-xl font-semibold text-sm transition flex items-center space-x-2 text-slate-300 hover:text-white hover:bg-slate-800">
+                <i class="fa-solid fa-id-card text-teal-400"></i>
+                <span>Pengembang</span>
+            </button>
+        </nav>
+
+        <!-- Utility Controls -->
+        <div class="flex items-center space-x-3">
+            <button onclick="toggleFullscreen()" class="p-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 transition focus:outline-none border border-slate-700" title="Layar Penuh">
+                <i id="fullscreen-icon" class="fa-solid fa-expand text-lg"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- MOBILE / Touch Drawer Menu Trigger (if needed) -->
+    <div class="md:hidden bg-slate-900 border-b border-slate-800 p-2 flex justify-around text-xs text-slate-300 font-medium">
+        <button onclick="switchTab('tujuan')" class="p-2">Tujuan</button>
+        <button onclick="switchTab('materi')" class="p-2">Materi</button>
+        <button onclick="switchTab('petualangan')" class="p-2">Petualangan</button>
+        <button onclick="switchTab('hots')" class="p-2">HOTS</button>
+        <button onclick="switchTab('refleksi')" class="p-2">Sertifikat</button>
+        <button onclick="switchTab('pengembang')" class="p-2">Pengembang</button>
+    </div>
+
+    <!-- MAIN CONTAINER -->
+    <main class="flex-1 relative overflow-hidden bg-slate-950">
+
+        <!-- ================= PAGE 0: HOMEPAGE / PENGANTAR (PAK HEDIRMAN) ================= -->
+        <section id="page-home" class="page-content absolute inset-0 flex items-center justify-center p-6 z-10">
+            <div class="max-w-4xl w-full glass-panel rounded-3xl p-8 md:p-12 shadow-2xl relative border-2 border-indigo-500/30 overflow-hidden my-auto">
+                <div class="absolute -right-20 -top-20 w-80 h-80 bg-sky-500/20 rounded-full blur-3xl pointer-events-none"></div>
+                <div class="absolute -left-20 -bottom-20 w-80 h-80 bg-indigo-500/20 rounded-full blur-3xl pointer-events-none"></div>
+
+                <div class="grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
+                    <!-- Foto Pak Hedirman & Welcome Badge -->
+                    <div class="md:col-span-5 flex flex-col items-center text-center">
+                        <div class="relative group">
+                            <div class="absolute -inset-1 bg-gradient-to-r from-sky-600 to-indigo-600 rounded-2xl blur opacity-75 group-hover:opacity-100 transition duration-1000 group-hover:duration-200"></div>
+                            <img id="pak-hedirman-photo-home" src="" alt="Pak Hedirman, S.Pd." class="relative w-48 h-56 object-cover rounded-2xl shadow-xl border-2 border-white bg-slate-200">
+                        </div>
+                        <h3 class="font-heading font-bold text-lg text-slate-900 mt-4">Hedirman, S.Pd.</h3>
+                        <p class="text-xs text-sky-700 font-semibold">Guru Matematika SMPN 2 Jengan Danum</p>
+                    </div>
+
+                    <!-- Salam & Input Siswa -->
+                    <div class="md:col-span-7 flex flex-col space-y-5">
+                        <div class="inline-flex items-center space-x-2 bg-sky-100 border border-sky-300 text-sky-800 text-xs font-bold px-3 py-1.5 rounded-full w-max">
+                            <i class="fa-solid fa-sparkles text-amber-500"></i>
+                            <span>Selamat Datang di MPI Interaktif</span>
+                        </div>
+                        
+                        <h2 class="text-2xl md:text-3xl font-heading font-extrabold text-slate-900 leading-tight">
+                            Siap Menjadi Ahli Analisis Data Matematika?
+                        </h2>
+
+                        <blockquote class="text-slate-600 text-sm md:text-base italic border-l-4 border-sky-500 pl-4 py-1">
+                            "Matematika bukan sekadar menghitung angka, tetapi seni memahami pola dunia di sekitar kita. Mari menjelajah statistik dengan penuh semangat!"
+                        </blockquote>
+
+                        <!-- Form Registration -->
+                        <div class="bg-slate-50/80 p-5 rounded-2xl border border-slate-200 space-y-4">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 mb-1">Nama Lengkap Murid:</label>
+                                <input type="text" id="input-student-name" placeholder="Masukkan nama lengkap Anda..." class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-sky-500 focus:outline-none text-slate-800 font-medium text-sm">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 mb-1">Asal Sekolah:</label>
+                                <input type="text" id="input-student-school" value="SMP Negeri 2 Jengan Danum" placeholder="Masukkan nama sekolah..." class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-sky-500 focus:outline-none text-slate-800 font-medium text-sm">
+                            </div>
+                            <button onclick="startApp()" class="w-full bg-gradient-to-r from-sky-600 to-indigo-600 hover:from-sky-700 hover:to-indigo-700 text-white font-heading font-bold py-3.5 px-6 rounded-xl shadow-lg shadow-sky-600/30 transition transform hover:-translate-y-0.5 flex items-center justify-center space-x-3">
+                                <span>Mulai Petualangan Pembelajaran</span>
+                                <i class="fa-solid fa-arrow-right"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= PAGE 1: TUJUAN PEMBELAJARAN & PANDUAN ================= -->
+        <section id="page-tujuan" class="page-content absolute inset-0 hidden p-6 overflow-y-auto custom-scrollbar">
+            <div class="max-w-6xl mx-auto space-y-6 pb-12">
+                <!-- Banner Header -->
+                <div class="glass-panel p-8 rounded-3xl shadow-lg border border-white/50 bg-gradient-to-r from-sky-600 to-indigo-700 text-white">
+                    <div class="flex items-center space-x-4">
+                        <div class="p-4 bg-white/10 backdrop-blur-md rounded-2xl">
+                            <i class="fa-solid fa-bullseye text-4xl text-amber-300"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-2xl md:text-3xl font-heading font-extrabold">Tujuan Pembelajaran & Panduan</h2>
+                            <p class="text-sky-100 text-sm mt-1">Capaian Pembelajaran Kurikulum Merdeka - Matematika Fase D / Kelas IX</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Cards Target Pembelajaran -->
+                    <div class="glass-panel p-6 rounded-3xl shadow-md border border-slate-200">
+                        <div class="flex items-center space-x-3 mb-4">
+                            <div class="w-10 h-10 rounded-xl bg-sky-100 text-sky-600 flex items-center justify-center font-bold text-lg">
+                                <i class="fa-solid fa-graduation-cap"></i>
+                            </div>
+                            <h3 class="font-heading font-bold text-lg text-slate-900">Tujuan Pembelajaran (TP)</h3>
+                        </div>
+                        <p class="text-slate-600 text-sm leading-relaxed mb-4">
+                            Murid mampu <strong>menghitung</strong>, <strong>menafsirkan</strong>, dan <strong>membandingkan</strong> ukuran pemusatan dan penyebaran data meliputi:
+                        </p>
+                        <ul class="space-y-2 text-sm text-slate-700">
+                            <li class="flex items-start space-x-2">
+                                <i class="fa-solid fa-check-circle text-emerald-500 mt-1"></i>
+                                <span><strong>Rata-rata (Mean):</strong> Ukuran pemusatan data tunggal & berkelompok.</span>
+                            </li>
+                            <li class="flex items-start space-x-2">
+                                <i class="fa-solid fa-check-circle text-emerald-500 mt-1"></i>
+                                <span><strong>Median (Nilai Tengah):</strong> Posisi tengah data terurut.</span>
+                            </li>
+                            <li class="flex items-start space-x-2">
+                                <i class="fa-solid fa-check-circle text-emerald-500 mt-1"></i>
+                                <span><strong>Modus:</strong> Data dengan frekuensi kemunculan tertinggi.</span>
+                            </li>
+                            <li class="flex items-start space-x-2">
+                                <i class="fa-solid fa-check-circle text-emerald-500 mt-1"></i>
+                                <span><strong>Jangkauan (Range):</strong> Selisih nilai terbesar dan terkecil.</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Panduan Penggunaan IFP -->
+                    <div class="glass-panel p-6 rounded-3xl shadow-md border border-slate-200">
+                        <div class="flex items-center space-x-3 mb-4">
+                            <div class="w-10 h-10 rounded-xl bg-indigo-100 text-indigo-600 flex items-center justify-center font-bold text-lg">
+                                <i class="fa-solid fa-hand-pointer"></i>
+                            </div>
+                            <h3 class="font-heading font-bold text-lg text-slate-900">Panduan Tampilan Papan Digital (IFP)</h3>
+                        </div>
+                        <div class="space-y-3 text-sm text-slate-600">
+                            <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 flex items-start space-x-3">
+                                <span class="bg-indigo-600 text-white rounded-lg px-2 py-0.5 font-bold text-xs">1</span>
+                                <span>Gunakan sentuhan langsung (Touchscreen) atau pena stylus pada layar Papan Interaktif.</span>
+                            </div>
+                            <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 flex items-start space-x-3">
+                                <span class="bg-indigo-600 text-white rounded-lg px-2 py-0.5 font-bold text-xs">2</span>
+                                <span>Selesaikan modul <strong>Rangkuman Materi</strong> untuk memahami kalkulasi data.</span>
+                            </div>
+                            <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 flex items-start space-x-3">
+                                <span class="bg-indigo-600 text-white rounded-lg px-2 py-0.5 font-bold text-xs">3</span>
+                                <span>Masuk ke menu <strong>Ayo Berpetualang</strong> (Selesaikan 3 Level & 9 Tantangan secara berurutan).</span>
+                            </div>
+                            <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 flex items-start space-x-3">
+                                <span class="bg-indigo-600 text-white rounded-lg px-2 py-0.5 font-bold text-xs">4</span>
+                                <span>Uji kemampuan akhir pada <strong>Tantangan HOTS</strong> untuk memperoleh Sertifikat Ketuntasan (KKM ≥ 80).</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= PAGE 2: RANGKUMAN MATERI ================= -->
+        <section id="page-materi" class="page-content absolute inset-0 hidden p-6 overflow-y-auto custom-scrollbar">
+            <div class="max-w-6xl mx-auto space-y-6 pb-12">
+                
+                <!-- Navigation Tab Materi -->
+                <div class="flex space-x-2 bg-slate-900/50 p-1.5 rounded-2xl border border-slate-800 max-w-md mx-auto">
+                    <button onclick="toggleMateriTab('tunggal')" id="btn-materi-tunggal" class="flex-1 py-2.5 rounded-xl font-heading font-bold text-sm text-white bg-sky-600 shadow">Data Tunggal</button>
+                    <button onclick="toggleMateriTab('kelompok')" id="btn-materi-kelompok" class="flex-1 py-2.5 rounded-xl font-heading font-bold text-sm text-slate-400 hover:text-white">Data Berkelompok</button>
+                </div>
+
+                <!-- MATERI DATA TUNGGAL -->
+                <div id="materi-tunggal" class="space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Rata-rata (Mean) -->
+                        <div class="glass-panel p-6 rounded-3xl shadow-md border border-slate-200">
+                            <div class="flex items-center justify-between mb-3">
+                                <h4 class="font-heading font-bold text-slate-900 text-lg">1. Rata-rata (Mean)</h4>
+                                <span class="bg-sky-100 text-sky-800 text-xs px-2.5 py-1 rounded-full font-bold">Simbol: $\bar{x}$</span>
+                            </div>
+                            <p class="text-xs text-slate-600 mb-3">Jumlah seluruh nilai data dibagi dengan banyaknya data.</p>
+                            <div class="bg-slate-900 text-amber-300 p-4 rounded-xl text-center font-mono text-sm mb-4">
+                                Rata-rata ($\bar{x}$) = $\frac{\sum x}{n}$ = $\frac{\text{Jumlah Data}}{\text{Banyak Data}}$
+                            </div>
+                            <div class="bg-sky-50 p-3 rounded-xl border border-sky-200">
+                                <p class="text-xs font-bold text-sky-900 mb-1"><i class="fa-solid fa-lightbulb text-amber-500 mr-1"></i> Aplikasi Nyata:</p>
+                                <p class="text-xs text-sky-800">Menghitung rata-rata nilai ujian matematika kelas IX-A untuk evaluasi kelulusan.</p>
+                            </div>
+                        </div>
+
+                        <!-- Median (Nilai Tengah) -->
+                        <div class="glass-panel p-6 rounded-3xl shadow-md border border-slate-200">
+                            <div class="flex items-center justify-between mb-3">
+                                <h4 class="font-heading font-bold text-slate-900 text-lg">2. Median (Me)</h4>
+                                <span class="bg-emerald-100 text-emerald-800 text-xs px-2.5 py-1 rounded-full font-bold">Posisi Tengah</span>
+                            </div>
+                            <p class="text-xs text-slate-600 mb-3">Nilai tengah dari data yang telah diurutkan dari terkecil ke terbesar.</p>
+                            <div class="bg-slate-900 text-amber-300 p-4 rounded-xl text-center font-mono text-xs mb-4">
+                                Data Ganjil: Nilai tepat di posisi $\frac{n+1}{2}$<br>
+                                Data Genap: Rata-rata 2 nilai tengah
+                            </div>
+                            <div class="bg-emerald-50 p-3 rounded-xl border border-emerald-200">
+                                <p class="text-xs font-bold text-emerald-900 mb-1"><i class="fa-solid fa-lightbulb text-amber-500 mr-1"></i> Aplikasi Nyata:</p>
+                                <p class="text-xs text-emerald-800">Menentukan pendapatan tengah warga agar tidak bias oleh angka pendapatan ekstrem.</p>
+                            </div>
+                        </div>
+
+                        <!-- Modus & Jangkauan -->
+                        <div class="glass-panel p-6 rounded-3xl shadow-md border border-slate-200">
+                            <div class="flex items-center justify-between mb-3">
+                                <h4 class="font-heading font-bold text-slate-900 text-lg">3. Modus (Mo)</h4>
+                                <span class="bg-purple-100 text-purple-800 text-xs px-2.5 py-1 rounded-full font-bold">Paling Sering Muncul</span>
+                            </div>
+                            <p class="text-xs text-slate-600 mb-3">Nilai data yang memiliki frekuensi tertinggi.</p>
+                            <div class="bg-purple-50 p-3 rounded-xl border border-purple-200 mb-4">
+                                <p class="text-xs text-purple-900">Data bisa memiliki 1 modus (unimodal), 2 modus (bimodal), atau tanpa modus.</p>
+                            </div>
+                            <p class="text-xs font-bold text-slate-800 mb-1"><i class="fa-solid fa-store text-purple-600 mr-1"></i> Aplikasi Nyata:</p>
+                            <p class="text-xs text-slate-600">Mengetahui ukuran sepatu murid yang paling laku dijual di koperasi sekolah.</p>
+                        </div>
+
+                        <div class="glass-panel p-6 rounded-3xl shadow-md border border-slate-200">
+                            <div class="flex items-center justify-between mb-3">
+                                <h4 class="font-heading font-bold text-slate-900 text-lg">4. Jangkauan (Range)</h4>
+                                <span class="bg-rose-100 text-rose-800 text-xs px-2.5 py-1 rounded-full font-bold">Penyebaran Data</span>
+                            </div>
+                            <p class="text-xs text-slate-600 mb-3">Selisih antara nilai terbesar (maksimum) dan nilai terkecil (minimum).</p>
+                            <div class="bg-slate-900 text-amber-300 p-4 rounded-xl text-center font-mono text-sm mb-4">
+                                Jangkauan (R) = $X_{\text{maks}} - X_{\text{min}}$
+                            </div>
+                            <p class="text-xs font-bold text-slate-800 mb-1"><i class="fa-solid fa-temperature-high text-rose-500 mr-1"></i> Aplikasi Nyata:</p>
+                            <p class="text-xs text-slate-600">Menganalisis rentang fluktuasi suhu harian di Kabupaten Kutai Barat.</p>
+                        </div>
+                    </div>
+
+                    <!-- Simulator Interaktif Data Tunggal -->
+                    <div class="glass-panel p-6 rounded-3xl border border-sky-300 bg-sky-900/10 shadow-xl">
+                        <h4 class="font-heading font-bold text-lg text-white mb-2 flex items-center space-x-2">
+                            <i class="fa-solid fa-calculator text-sky-400"></i>
+                            <span>Kalkulator Interaktif Data Tunggal (Coba Sekarang)</span>
+                        </h4>
+                        <p class="text-xs text-slate-300 mb-4">Masukkan sekumpulan angka (pisahkan dengan koma):</p>
+                        <div class="flex flex-col md:flex-row gap-3 mb-4">
+                            <input type="text" id="calc-input" value="70, 85, 90, 75, 85, 95, 80" class="flex-1 px-4 py-3 rounded-xl border border-slate-600 bg-slate-900 text-white text-sm focus:outline-none focus:ring-2 focus:ring-sky-500">
+                            <button onclick="calculateSingleData()" class="px-6 py-3 bg-sky-600 hover:bg-sky-500 text-white font-bold rounded-xl text-sm transition">Hitung Sekarang</button>
+                        </div>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4" id="calc-results">
+                            <div class="bg-slate-900/80 p-4 rounded-xl border border-slate-700 text-center">
+                                <span class="text-slate-400 text-xs block">Rata-rata (Mean)</span>
+                                <span id="res-mean" class="text-sky-400 font-bold text-xl">82.86</span>
+                            </div>
+                            <div class="bg-slate-900/80 p-4 rounded-xl border border-slate-700 text-center">
+                                <span class="text-slate-400 text-xs block">Median</span>
+                                <span id="res-median" class="text-emerald-400 font-bold text-xl">85</span>
+                            </div>
+                            <div class="bg-slate-900/80 p-4 rounded-xl border border-slate-700 text-center">
+                                <span class="text-slate-400 text-xs block">Modus</span>
+                                <span id="res-mode" class="text-purple-400 font-bold text-xl">85</span>
+                            </div>
+                            <div class="bg-slate-900/80 p-4 rounded-xl border border-slate-700 text-center">
+                                <span class="text-slate-400 text-xs block">Jangkauan (Range)</span>
+                                <span id="res-range" class="text-rose-400 font-bold text-xl">25</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- MATERI DATA BERKELOMPOK -->
+                <div id="materi-kelompok" class="space-y-6 hidden">
+                    <div class="glass-panel p-6 rounded-3xl shadow-md border border-slate-200">
+                        <h4 class="font-heading font-bold text-slate-900 text-lg mb-3">Konsep Data Berkelompok</h4>
+                        <p class="text-sm text-slate-600 leading-relaxed mb-4">
+                            Data berkelompok disajikan dalam bentuk interval kelas frekuensi. Titik tengah ($x_i$) digunakan sebagai wakil dari setiap interval kelas.
+                        </p>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="bg-slate-900 text-white p-5 rounded-2xl">
+                                <h5 class="font-bold text-amber-400 text-sm mb-2">Rumus Mean Data Berkelompok:</h5>
+                                <p class="font-mono text-center text-base my-3 text-sky-300">$$\bar{x} = \frac{\sum (f_i \cdot x_i)}{\sum f_i}$$</p>
+                                <ul class="text-xs text-slate-300 space-y-1">
+                                    <li>$f_i$ = Frekuensi kelas ke-i</li>
+                                    <li>$x_i$ = Titik tengah kelas ke-i = $\frac{\text{Batas Bawah} + \text{Batas Atas}}{2}$</li>
+                                </ul>
+                            </div>
+
+                            <div class="bg-slate-900 text-white p-5 rounded-2xl">
+                                <h5 class="font-bold text-amber-400 text-sm mb-2">Contoh Tabel Frekuensi:</h5>
+                                <table class="w-full text-xs text-left text-slate-300">
+                                    <thead class="border-b border-slate-700 text-amber-300">
+                                        <tr>
+                                            <th class="py-1">Interval Nilai</th>
+                                            <th class="py-1">Frekuensi ($f$)</th>
+                                            <th class="py-1">Titik Tengah ($x$)</th>
+                                            <th class="py-1">$f \cdot x$</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-slate-800">
+                                        <tr><td class="py-1">50 - 59</td><td>3</td><td>54.5</td><td>163.5</td></tr>
+                                        <tr><td class="py-1">60 - 69</td><td>5</td><td>64.5</td><td>322.5</td></tr>
+                                        <tr><td class="py-1">70 - 79</td><td>10</td><td>74.5</td><td>745.0</td></tr>
+                                        <tr><td class="py-1">80 - 89</td><td>2</td><td>84.5</td><td>169.0</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- ================= PAGE 3: AYO BERPETUALANG (3 LEVEL X 3 TANTANGAN) ================= -->
+        <section id="page-petualangan" class="page-content absolute inset-0 hidden p-6 overflow-y-auto custom-scrollbar">
+            <div class="max-w-6xl mx-auto space-y-6 pb-12">
+                
+                <!-- Progress Header Bar -->
+                <div class="glass-panel p-6 rounded-3xl shadow-lg border border-slate-200 flex flex-col md:flex-row items-center justify-between gap-4">
+                    <div>
+                        <h2 class="text-xl font-heading font-extrabold text-slate-900 flex items-center space-x-2">
+                            <i class="fa-solid fa-map-location-dot text-amber-500"></i>
+                            <span>Peta Adventure Analisis Data</span>
+                        </h2>
+                        <p class="text-xs text-slate-500">Selesaikan semua level dan tantangan untuk membuka gerbang HOTS!</p>
+                    </div>
+
+                    <!-- Visual Progress Bar -->
+                    <div class="w-full md:w-80 space-y-1">
+                        <div class="flex justify-between text-xs font-bold text-slate-700">
+                            <span>Progres Petualangan:</span>
+                            <span id="adventure-progress-text">0 / 9 Tantangan</span>
+                        </div>
+                        <div class="w-full bg-slate-200 h-3.5 rounded-full overflow-hidden p-0.5 border border-slate-300">
+                            <div id="adventure-progress-bar" class="bg-gradient-to-r from-amber-400 via-sky-500 to-emerald-500 h-full rounded-full transition-all duration-500" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- LEVEL GRID CONTAINER -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    
+                    <!-- LEVEL 1 CARD -->
+                    <div class="glass-panel rounded-3xl p-6 border-2 border-slate-200 relative overflow-hidden flex flex-col justify-between shadow-md">
+                        <div class="absolute -right-6 -top-6 w-24 h-24 bg-sky-500/10 rounded-full blur-xl"></div>
+                        <div>
+                            <div class="flex items-center justify-between mb-4">
+                                <span class="bg-sky-100 text-sky-800 text-xs font-extrabold px-3 py-1 rounded-full">LEVEL 1</span>
+                                <i class="fa-solid fa-seedling text-2xl text-sky-500"></i>
+                            </div>
+                            <h3 class="font-heading font-bold text-lg text-slate-900 mb-1">Pualam Statistik Tunggal</h3>
+                            <p class="text-xs text-slate-500 mb-4">Menguasai pemusatan data tunggal: Mean, Median, & Modus dasar.</p>
+                        </div>
+                        <div class="space-y-2.5">
+                            <button onclick="openAdventureTask(1, 'mudah')" id="btn-lvl-1-mudah" class="w-full py-3 px-4 rounded-xl text-xs font-bold flex items-center justify-between transition bg-sky-600 text-white hover:bg-sky-700 shadow">
+                                <span>Tantangan 1: Mudah</span>
+                                <span id="status-1-mudah"><i class="fa-solid fa-play"></i></span>
+                            </button>
+                            <button onclick="openAdventureTask(1, 'sedang')" id="btn-lvl-1-sedang" class="w-full py-3 px-4 rounded-xl text-xs font-bold flex items-center justify-between transition bg-slate-200 text-slate-500 cursor-not-allowed">
+                                <span>Tantangan 2: Sedang</span>
+                                <span id="status-1-sedang"><i class="fa-solid fa-lock"></i></span>
+                            </button>
+                            <button onclick="openAdventureTask(1, 'sulit')" id="btn-lvl-1-sulit" class="w-full py-3 px-4 rounded-xl text-xs font-bold flex items-center justify-between transition bg-slate-200 text-slate-500 cursor-not-allowed">
+                                <span>Tantangan 3: Sulit</span>
+                                <span id="status-1-sulit"><i class="fa-solid fa-lock"></i></span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- LEVEL 2 CARD -->
+                    <div class="glass-panel rounded-3xl p-6 border-2 border-slate-200 relative overflow-hidden flex flex-col justify-between shadow-md">
+                        <div class="absolute -right-6 -top-6 w-24 h-24 bg-emerald-500/10 rounded-full blur-xl"></div>
+                        <div>
+                            <div class="flex items-center justify-between mb-4">
+                                <span class="bg-emerald-100 text-emerald-800 text-xs font-extrabold px-3 py-1 rounded-full">LEVEL 2</span>
+                                <i class="fa-solid fa-chart-simple text-2xl text-emerald-500"></i>
+                            </div>
+                            <h3 class="font-heading font-bold text-lg text-slate-900 mb-1">Lembah Jangkauan & Pembandingan</h3>
+                            <p class="text-xs text-slate-500 mb-4">Membandingkan dua kelompok data dan analisis jangkauan.</p>
+                        </div>
+                        <div class="space-y-2.5">
+                            <button onclick="openAdventureTask(2, 'mudah')" id="btn-lvl-2-mudah" class="w-full py-3 px-4 rounded-xl text-xs font-bold flex items-center justify-between transition bg-slate-200 text-slate-500 cursor-not-allowed">
+                                <span>Tantangan 1: Mudah</span>
+                                <span id="status-2-mudah"><i class="fa-solid fa-lock"></i></span>
+                            </button>
+                            <button onclick="openAdventureTask(2, 'sedang')" id="btn-lvl-2-sedang" class="w-full py-3 px-4 rounded-xl text-xs font-bold flex items-center justify-between transition bg-slate-200 text-slate-500 cursor-not-allowed">
+                                <span>Tantangan 2: Sedang</span>
+                                <span id="status-2-sedang"><i class="fa-solid fa-lock"></i></span>
+                            </button>
+                            <button onclick="openAdventureTask(2, 'sulit')" id="btn-lvl-2-sulit" class="w-full py-3 px-4 rounded-xl text-xs font-bold flex items-center justify-between transition bg-slate-200 text-slate-500 cursor-not-allowed">
+                                <span>Tantangan 3: Sulit</span>
+                                <span id="status-2-sulit"><i class="fa-solid fa-lock"></i></span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- LEVEL 3 CARD -->
+                    <div class="glass-panel rounded-3xl p-6 border-2 border-slate-200 relative overflow-hidden flex flex-col justify-between shadow-md">
+                        <div class="absolute -right-6 -top-6 w-24 h-24 bg-indigo-500/10 rounded-full blur-xl"></div>
+                        <div>
+                            <div class="flex items-center justify-between mb-4">
+                                <span class="bg-indigo-100 text-indigo-800 text-xs font-extrabold px-3 py-1 rounded-full">LEVEL 3</span>
+                                <i class="fa-solid fa-cubes text-2xl text-indigo-500"></i>
+                            </div>
+                            <h3 class="font-heading font-bold text-lg text-slate-900 mb-1">Puncak Data Berkelompok</h3>
+                            <p class="text-xs text-slate-500 mb-4">Penafsiran data tabel frekuensi dan interval kelas.</p>
+                        </div>
+                        <div class="space-y-2.5">
+                            <button onclick="openAdventureTask(3, 'mudah')" id="btn-lvl-3-mudah" class="w-full py-3 px-4 rounded-xl text-xs font-bold flex items-center justify-between transition bg-slate-200 text-slate-500 cursor-not-allowed">
+                                <span>Tantangan 1: Mudah</span>
+                                <span id="status-3-mudah"><i class="fa-solid fa-lock"></i></span>
+                            </button>
+                            <button onclick="openAdventureTask(3, 'sedang')" id="btn-lvl-3-sedang" class="w-full py-3 px-4 rounded-xl text-xs font-bold flex items-center justify-between transition bg-slate-200 text-slate-500 cursor-not-allowed">
+                                <span>Tantangan 2: Sedang</span>
+                                <span id="status-3-sedang"><i class="fa-solid fa-lock"></i></span>
+                            </button>
+                            <button onclick="openAdventureTask(3, 'sulit')" id="btn-lvl-3-sulit" class="w-full py-3 px-4 rounded-xl text-xs font-bold flex items-center justify-between transition bg-slate-200 text-slate-500 cursor-not-allowed">
+                                <span>Tantangan 3: Sulit</span>
+                                <span id="status-3-sulit"><i class="fa-solid fa-lock"></i></span>
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= PAGE 4: TANTANGAN SOAL HOTS ================= -->
+        <section id="page-hots" class="page-content absolute inset-0 hidden p-6 overflow-y-auto custom-scrollbar">
+            <div class="max-w-4xl mx-auto space-y-6 pb-12">
+                
+                <div class="glass-panel p-6 rounded-3xl shadow-lg border border-purple-300 bg-gradient-to-r from-purple-900/90 to-indigo-900/90 text-white flex items-center justify-between">
+                    <div>
+                        <h2 class="text-2xl font-heading font-extrabold flex items-center space-x-3">
+                            <i class="fa-solid fa-brain text-purple-400"></i>
+                            <span>Tantangan Ujian HOTS</span>
+                        </h2>
+                        <p class="text-xs text-purple-200 mt-1">Soal Cerita Analitis Pilihan Ganda (Syarat KKM Sertifikat = 80)</p>
+                    </div>
+                    <div class="text-right">
+                        <span class="text-xs text-purple-300 block">Skor HOTS Saat Ini:</span>
+                        <span id="hots-score-display" class="font-heading font-extrabold text-3xl text-amber-300">0</span>
+                    </div>
+                </div>
+
+                <!-- HOTS Quiz Display Container -->
+                <div id="hots-quiz-card" class="glass-panel p-8 rounded-3xl shadow-xl border border-slate-200 space-y-6">
+                    <div class="flex items-center justify-between border-b border-slate-200 pb-4">
+                        <span id="hots-question-number" class="font-heading font-bold text-sm text-indigo-600 bg-indigo-50 px-3 py-1 rounded-full">Soal 1 dari 5</span>
+                        <span class="text-xs font-bold text-slate-400">Pilihan Ganda</span>
+                    </div>
+
+                    <div id="hots-question-text" class="text-slate-800 text-base md:text-lg font-medium leading-relaxed">
+                        <!-- Dynamic Question Content -->
+                    </div>
+
+                    <div id="hots-options-container" class="space-y-3">
+                        <!-- Dynamic Options Buttons -->
+                    </div>
+
+                    <div class="flex justify-between items-center pt-4 border-t border-slate-200">
+                        <div id="hots-feedback" class="text-sm font-bold"></div>
+                        <button id="btn-next-hots" onclick="nextHotsQuestion()" class="hidden px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl text-sm transition shadow-md">
+                            Soal Berikutnya <i class="fa-solid fa-arrow-right ml-1"></i>
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- ================= PAGE 5: REFLEKSI & SERTIFIKAT ================= -->
+        <section id="page-refleksi" class="page-content absolute inset-0 hidden p-6 overflow-y-auto custom-scrollbar">
+            <div class="max-w-4xl mx-auto space-y-8 pb-12">
+                
+                <!-- Refleksi Self-Assessment -->
+                <div class="glass-panel p-8 rounded-3xl shadow-lg border border-slate-200 space-y-6">
+                    <div class="flex items-center space-x-3 border-b border-slate-200 pb-4">
+                        <i class="fa-solid fa-comments text-2xl text-rose-500"></i>
+                        <h2 class="text-xl font-heading font-extrabold text-slate-900">Refleksi Pembelajaran Murid</h2>
+                    </div>
+
+                    <p class="text-xs text-slate-600">Jawablah pertanyaan refleksi berikut untuk mengukur pemahaman diri Anda:</p>
+
+                    <div class="space-y-4">
+                        <div class="p-4 bg-slate-50 rounded-2xl border border-slate-200">
+                            <label class="block text-sm font-bold text-slate-800 mb-2">1. Materi apa yang paling Anda kuasai dalam modul Analisis Data ini?</label>
+                            <input type="text" id="refleksi-1" placeholder="Misal: Menghitung rata-rata dan menentukan modus..." class="w-full p-3 rounded-xl border border-slate-300 text-xs focus:ring-2 focus:ring-sky-500 focus:outline-none">
+                        </div>
+
+                        <div class="p-4 bg-slate-50 rounded-2xl border border-slate-200">
+                            <label class="block text-sm font-bold text-slate-800 mb-2">2. Bagian mana yang menurut Anda membutuhkan latihan lebih lanjut?</label>
+                            <input type="text" id="refleksi-2" placeholder="Misal: Membandingkan dua jangkauan data tunggal..." class="w-full p-3 rounded-xl border border-slate-300 text-xs focus:ring-2 focus:ring-sky-500 focus:outline-none">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SERTIFIKAT KETUNTASAN -->
+                <div class="glass-panel p-8 rounded-3xl shadow-xl border border-amber-300 text-center space-y-6">
+                    <h3 class="font-heading font-bold text-xl text-slate-900">Status Kelulusan & Sertifikat (KKM = 80)</h3>
+                    
+                    <div id="certificate-status-box" class="p-6 rounded-2xl bg-slate-100 border border-slate-300">
+                        <!-- Dynamic Status Message -->
+                    </div>
+
+                    <!-- Certificate Preview Container -->
+                    <div id="printable-certificate" class="hidden p-8 bg-amber-50/40 rounded-3xl border-8 border-double border-amber-600 relative overflow-hidden shadow-2xl text-slate-900">
+                        <div class="absolute -right-16 -bottom-16 w-48 h-48 bg-amber-400/20 rounded-full blur-2xl"></div>
+                        
+                        <div class="flex justify-between items-center mb-6">
+                            <span class="text-xs font-bold tracking-widest text-amber-800 uppercase">SMP NEGERI 2 JENGAN DANUM</span>
+                            <span class="text-xs font-bold text-slate-500">Matematika IX - Analisis Data</span>
+                        </div>
+
+                        <h1 class="font-heading font-extrabold text-3xl md:text-4xl text-amber-900 tracking-wider uppercase mb-2">SERTIFIKAT KETUNTASAN</h1>
+                        <p class="text-xs text-amber-800 italic font-semibold mb-6">Diberikan sebagai penghargaan atas pencapaian kompetensi matematika</p>
+
+                        <div class="my-6">
+                            <p class="text-xs text-slate-600 uppercase tracking-widest">Diberikan Kepada:</p>
+                            <h2 id="cert-student-name" class="font-heading font-extrabold text-2xl md:text-3xl text-slate-900 border-b-2 border-amber-500 inline-block px-6 py-1 my-2">NAMA SISWA</h2>
+                            <p id="cert-student-school" class="text-xs font-bold text-slate-600">SMP Negeri 2 Jengan Danum</p>
+                        </div>
+
+                        <p class="text-xs leading-relaxed max-w-xl mx-auto text-slate-700 my-4">
+                            Dinyatakan **TUNTAS** dalam mencapai Tujuan Pembelajaran Matematika: <i>Menghitung, menafsirkan, dan membandingkan Rata-rata, Median, Modus, dan Jangkauan Data</i> dengan nilai evaluasi HOTS:
+                        </p>
+
+                        <div class="inline-block bg-amber-600 text-white font-heading font-extrabold text-2xl px-6 py-2 rounded-2xl shadow-lg my-2">
+                            NILAI: <span id="cert-score">100</span> / 100
+                        </div>
+
+                        <div class="mt-8 pt-6 border-t border-amber-300 flex justify-between items-end text-left">
+                            <div class="text-xs text-slate-500">
+                                <p>Tanggal Lulus: <span id="cert-date">--/--/----</span></p>
+                                <p>Status: KKM Terlampaui (≥ 80)</p>
+                            </div>
+                            <div class="text-center">
+                                <p class="text-xs text-slate-600 mb-8 font-semibold">Guru Pengampu Matematika,</p>
+                                <p class="font-heading font-bold text-sm text-slate-900 underline">Hedirman, S.Pd.</p>
+                                <p class="text-[10px] text-slate-500">NIP. SMPN 2 Jengan Danum</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button id="btn-print-cert" onclick="window.print()" class="hidden px-8 py-3.5 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white font-heading font-bold rounded-xl shadow-lg transition">
+                        <i class="fa-solid fa-print mr-2"></i> Cetak Sertifikat Digital
+                    </button>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- ================= PAGE 6: PENGEMBANG & REFERENSI ================= -->
+        <section id="page-pengembang" class="page-content absolute inset-0 hidden p-6 overflow-y-auto custom-scrollbar">
+            <div class="max-w-4xl mx-auto space-y-6 pb-12">
+                
+                <div class="glass-panel p-8 rounded-3xl shadow-xl border border-slate-200 space-y-8">
+                    <!-- Head Developer Info -->
+                    <div class="flex flex-col md:flex-row items-center space-y-4 md:space-y-0 md:space-x-8 border-b border-slate-200 pb-8">
+                        <img id="pak-hedirman-photo-dev" src="" alt="Hedirman, S.Pd." class="w-40 h-48 object-cover rounded-2xl shadow-xl border-4 border-white bg-slate-200">
+                        <div class="space-y-3 text-center md:text-left">
+                            <span class="bg-teal-100 text-teal-800 text-xs font-bold px-3 py-1 rounded-full">Pengembang MPI</span>
+                            <h2 class="text-2xl font-heading font-extrabold text-slate-900">Hedirman, S.Pd.</h2>
+                            <p class="text-sm font-semibold text-slate-600 flex items-center justify-center md:justify-start space-x-2">
+                                <i class="fa-solid fa-school text-sky-600"></i>
+                                <span>Unit Kerja: SMP Negeri 2 Jengan Danum</span>
+                            </p>
+                            <p class="text-xs text-slate-500 leading-relaxed max-w-lg">
+                                Berdedikasi dalam mengembangkan inovasi pembelajaran matematika berbasis digital interaktif untuk meningkatkan penalaran analitis siswa di kelas.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Referensi & Kepustakaan -->
+                    <div class="space-y-4">
+                        <h3 class="font-heading font-bold text-lg text-slate-900 flex items-center space-x-2">
+                            <i class="fa-solid fa-book-bookmark text-teal-600"></i>
+                            <span>Referensi & Sumber Pustaka</span>
+                        </h3>
+                        <ul class="space-y-2 text-xs text-slate-600">
+                            <li class="p-3 bg-slate-50 rounded-xl border border-slate-200">
+                                <strong>Kementerian Pendidikan, Kebudayaan, Riset, dan Teknologi (2022).</strong> <i>Buku Panduan Guru & Buku Siswa Matematika Kelas IX.</i> Jakarta: Pusat Kurikulum dan Perbukuan.
+                            </li>
+                            <li class="p-3 bg-slate-50 rounded-xl border border-slate-200">
+                                <strong>Capaian Pembelajaran (CP) Matematika Fase D:</strong> Elemen Analisis Data dan Peluang, Kurikulum Merdeka.
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <!-- MODAL POPUP FOR ADVENTURE TASKS -->
+    <div id="adventure-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+        <div class="glass-panel max-w-2xl w-full rounded-3xl p-6 md:p-8 shadow-2xl border border-slate-200 space-y-6 animate-fade-in">
+            <div class="flex items-center justify-between border-b border-slate-200 pb-3">
+                <span id="modal-task-title" class="font-heading font-bold text-base text-sky-600">Level X - Tantangan Y</span>
+                <button onclick="closeAdventureModal()" class="text-slate-400 hover:text-slate-600 text-xl font-bold p-1"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+
+            <div id="modal-task-question" class="text-slate-800 text-sm md:text-base font-medium leading-relaxed">
+                <!-- Dynamic Question -->
+            </div>
+
+            <div id="modal-task-options" class="space-y-3">
+                <!-- Dynamic Options Buttons -->
+            </div>
+
+            <div id="modal-task-feedback" class="text-sm font-bold min-h-[24px]"></div>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        // Set Developer Photo Source from Provided Asset
+        const devPhotoUrl = "Desain tanpa judul.jpg";
+        document.getElementById('pak-hedirman-photo-home').src = devPhotoUrl;
+        document.getElementById('pak-hedirman-photo-dev').src = devPhotoUrl;
+
+        // Global State
+        let studentInfo = {
+            name: '',
+            school: ''
+        };
+
+        let adventureState = {
+            lvl1_mudah: false,
+            lvl1_sedang: false,
+            lvl1_sulit: false,
+            lvl2_mudah: false,
+            lvl2_sedang: false,
+            lvl2_sulit: false,
+            lvl3_mudah: false,
+            lvl3_sedang: false,
+            lvl3_sulit: false
+        };
+
+        let currentHotsIndex = 0;
+        let hotsScore = 0;
+        let hotsAnswers = [];
+
+        // Adventure Questions Database
+        const adventureData = {
+            1: {
+                mudah: {
+                    q: "Diketahui nilai ulangan Matematika 5 siswa SMPN 2 Jengan Danum adalah: 70, 80, 80, 90, 100. Berapakah nilai <strong>Rata-rata (Mean)</strong> dari data tersebut?",
+                    options: ["80", "84", "85", "90"],
+                    answer: 1 // 84
+                },
+                sedang: {
+                    q: "Data tinggi badan 7 pemain basket (dalam cm): 165, 170, 168, 175, 180, 170, 172. Berapakah nilai <strong>Median</strong> data tersebut setelah diurutkan?",
+                    options: ["170", "171", "172", "175"],
+                    answer: 0 // 170
+                },
+                sulit: {
+                    q: "Tentukan <strong>Modus</strong> dan <strong>Jangkauan (Range)</strong> dari kumpulan nilai berikut: 65, 75, 80, 75, 90, 75, 85, 100.",
+                    options: ["Modus = 75, Range = 35", "Modus = 80, Range = 30", "Modus = 75, Range = 25", "Modus = 85, Range = 35"],
+                    answer: 0 // Modus 75, Range 100-65=35
+                }
+            },
+            2: {
+                mudah: {
+                    q: "Kelompok A memiliki rata-rata ujian 75 dengan jangkauan 10. Kelompok B memiliki rata-rata 75 dengan jangkauan 25. Pernyataan manakah yang paling tepat?",
+                    options: [
+                        "Nilai siswa Kelompok B lebih merata dibanding Kelompok A",
+                        "Nilai siswa Kelompok A lebih merata (keragaman kecil) dibanding Kelompok B",
+                        "Kedua kelompok memiliki penyebaran nilai yang persis sama",
+                        "Kelompok B memiliki nilai tertinggi yang pasti lebih kecil"
+                    ],
+                    answer: 1
+                },
+                sedang: {
+                    q: "Rata-rata nilai 4 siswa adalah 75. Jika ditambah nilai Rina, rata-ratanya menjadi 78. Berapakah nilai ujian Rina?",
+                    options: ["85", "88", "90", "92"],
+                    answer: 2 // (4*75 + x)/5 = 78 => 300 + x = 390 => x = 90
+                },
+                sulit: {
+                    q: "Suatu data terdiri dari 5 bilangan asli setelah diurutkan: 4, 6, x, 10, y. Jika Median = 7 dan Jangkauan = 8, berapakah nilai dari x + y?",
+                    options: ["18", "19", "20", "21"],
+                    answer: 1 // Median x=7. Range y-4=8 => y=12. x+y = 7+12 = 19
+                }
+            },
+            3: {
+                mudah: {
+                    q: "Pada tabel frekuensi, interval kelas 60 - 69 memiliki frekuensi 8. Berapakah nilai <strong>Titik Tengah ($x_i$)</strong> kelas interval tersebut?",
+                    options: ["64.0", "64.5", "65.0", "65.5"],
+                    answer: 1 // (60+69)/2 = 64.5
+                },
+                sedang: {
+                    q: "Diketahui tabel frekuensi sederhana:<br>Nilai 6 (f=3), Nilai 7 (f=5), Nilai 8 (f=2). Berapakah rata-rata gabungannya?",
+                    options: ["6.8", "6.9", "7.0", "7.2"],
+                    answer: 1 // (18+35+16)/10 = 69/10 = 6.9
+                },
+                sulit: {
+                    q: "Tabel Frekuensi Data Berkelompok:<br>Interval 10-14 (f=2), 15-19 (f=4), 20-24 (f=4). Berapakah estimasi Rata-rata ($\bar{x}$) data berkelompok ini?",
+                    options: ["17.5", "18.0", "18.5", "19.0"],
+                    answer: 1 // Midpoints: 12 (f=2->24), 17 (f=4->68), 22 (f=4->88). Sum f*x = 180, Total f=10. Mean = 18.0
+                }
+            }
+        };
+
+        // HOTS Questions Database
+        const hotsDatabase = [
+            {
+                q: "Pak Hedirman mencatat waktu tempuh 10 siswa SMPN 2 Jengan Danum menuju sekolah. Rata-rata waktu tempuh adalah 20 menit. Ternyata ada 1 data siswa terlewat yang waktu tempuhnya 42 menit. Berapakah rata-rata waktu tempuh yang baru setelah data diperbaiki?",
+                options: ["21.0 menit", "22.0 menit", "22.5 menit", "23.0 menit"],
+                answer: 1, // (200 + 42)/11 = 242 / 11 = 22
+                explain: "Total awal = 10 x 20 = 200 menit. Total baru = 200 + 42 = 242 menit. Rata-rata baru = 242 / 11 = 22 menit."
+            },
+            {
+                q: "Dua kelas IX-A dan IX-B mengikuti tes matematika. Kelas IX-A (30 siswa) memperoleh rata-rata 80. Kelas IX-B (20 siswa) memperoleh rata-rata 90. Berapakah rata-rata gabungan kedua kelas tersebut?",
+                options: ["84.0", "85.0", "86.0", "87.5"],
+                answer: 0, // (30*80 + 20*90)/50 = (2400 + 1800)/50 = 4200/50 = 84
+                explain: "Rata-rata gabungan = (30×80 + 20×90) / 50 = 4200 / 50 = 84."
+            },
+            {
+                q: "Koperasi sekolah mencatat penjualan ukuran seragam: 38 (5 stel), 39 (8 stel), 40 (12 stel), 41 (6 stel), 42 (3 stel). Pengurus koperasi ingin memperbanyak stok seragam yang paling diminati. Ukuran manakah yang harus ditambah berdasarkan analisis <strong>Modus</strong>?",
+                options: ["Ukuran 39", "Ukuran 40", "Ukuran 41", "Ukuran 38"],
+                answer: 1, // Modus = 40 (frekuensi 12)
+                explain: "Modus adalah nilai dengan frekuensi terbanyak (Ukuran 40 sebanyak 12 stel)."
+            },
+            {
+                q: "Nilai ujian 5 orang siswa membentuk deret aritmatika dengan Median = 80 dan Jangkauan = 20. Berapakah nilai terkecil dan nilai terbesar siswa tersebut?",
+                options: ["70 dan 90", "65 dan 85", "75 dan 95", "60 dan 80"],
+                answer: 0, // Median a3=80. Data: a3-2d, a3-d, 80, 80+d, 80+2d. Range 4d = 20 => d=5. Min = 80-10=70, Max = 80+10=90.
+                explain: "Jika median 80 dan jangkauan 20 untuk deret simetris, maka nilai minimum = 80 - 10 = 70 dan maksimum = 80 + 10 = 90."
+            },
+            {
+                q: "Dalam sebuah kompetisi sains, peserta dinyatakan lolos jika skornya melebihi nilai <strong>Median</strong>. Skor peserta: 65, 70, 72, 75, 80, 85, 90, 95. Berapakah batas skor minimal agar seorang peserta dinyatakan lolos?",
+                options: ["Lebih dari 75", "Lebih dari 77.5", "Lebih dari 80", "Lebih dari 72.5"],
+                answer: 1, // Data: 8 (genap). Posisi tengah: ke-4 (75) & ke-5 (80). Median = (75+80)/2 = 77.5
+                explain: "Banyak data 8 (genap). Median = (75 + 80)/2 = 77.5. Syarat lolos: Skor > 77.5."
+            }
+        ];
+
+        // Start App Navigation
+        function startApp() {
+            const nameInput = document.getElementById('input-student-name').value.trim();
+            const schoolInput = document.getElementById('input-student-school').value.trim();
+
+            if (!nameInput) {
+                alert("Harap masukkan Nama Lengkap Anda terlebih dahulu!");
+                return;
+            }
+
+            studentInfo.name = nameInput;
+            studentInfo.school = schoolInput || 'SMP Negeri 2 Jengan Danum';
+
+            document.getElementById('cert-student-name').innerText = studentInfo.name;
+            document.getElementById('cert-student-school').innerText = studentInfo.school;
+
+            switchTab('tujuan');
+        }
+
+        // Switching Tabs
+        function switchTab(tabId) {
+            document.querySelectorAll('.page-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('bg-slate-800', 'text-white');
+                btn.classList.add('text-slate-300');
+            });
+
+            const targetPage = document.getElementById(`page-${tabId}`);
+            if (targetPage) targetPage.classList.remove('hidden');
+
+            const targetNav = document.getElementById(`nav-${tabId}`);
+            if (targetNav) {
+                targetNav.classList.add('bg-slate-800', 'text-white');
+            }
+
+            if (tabId === 'hots') {
+                renderHotsQuestion();
+            } else if (tabId === 'refleksi') {
+                updateCertificateStatus();
+            }
+        }
+
+        // Toggle Fullscreen
+        function toggleFullscreen() {
+            const icon = document.getElementById('fullscreen-icon');
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => console.log(err));
+                icon.classList.remove('fa-expand');
+                icon.classList.add('fa-compress');
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                    icon.classList.remove('fa-compress');
+                    icon.classList.add('fa-expand');
+                }
+            }
+        }
+
+        // Toggle Materi Sub-tabs
+        function toggleMateriTab(type) {
+            const tunggal = document.getElementById('materi-tunggal');
+            const kelompok = document.getElementById('materi-kelompok');
+            const btnTunggal = document.getElementById('btn-materi-tunggal');
+            const btnKelompok = document.getElementById('btn-materi-kelompok');
+
+            if (type === 'tunggal') {
+                tunggal.classList.remove('hidden');
+                kelompok.classList.add('hidden');
+                btnTunggal.className = "flex-1 py-2.5 rounded-xl font-heading font-bold text-sm text-white bg-sky-600 shadow";
+                btnKelompok.className = "flex-1 py-2.5 rounded-xl font-heading font-bold text-sm text-slate-400 hover:text-white";
+            } else {
+                kelompok.classList.remove('hidden');
+                tunggal.classList.add('hidden');
+                btnKelompok.className = "flex-1 py-2.5 rounded-xl font-heading font-bold text-sm text-white bg-sky-600 shadow";
+                btnTunggal.className = "flex-1 py-2.5 rounded-xl font-heading font-bold text-sm text-slate-400 hover:text-white";
+            }
+        }
+
+        // Interactive Single Data Calculator Logic
+        function calculateSingleData() {
+            const inputVal = document.getElementById('calc-input').value;
+            const arr = inputVal.split(',').map(n => parseFloat(n.trim())).filter(n => !isNaN(n));
+
+            if (arr.length === 0) return;
+
+            // Mean
+            const sum = arr.reduce((a, b) => a + b, 0);
+            const mean = (sum / arr.length).toFixed(2);
+
+            // Median
+            const sorted = [...arr].sort((a, b) => a - b);
+            let median = 0;
+            const mid = Math.floor(sorted.length / 2);
+            if (sorted.length % 2 === 0) {
+                median = (sorted[mid - 1] + sorted[mid]) / 2;
+            } else {
+                median = sorted[mid];
+            }
+
+            // Mode
+            const freq = {};
+            let maxFreq = 0;
+            let mode = [];
+            arr.forEach(n => {
+                freq[n] = (freq[n] || 0) + 1;
+                if (freq[n] > maxFreq) maxFreq = freq[n];
+            });
+            for (let k in freq) {
+                if (freq[k] === maxFreq && maxFreq > 1) mode.push(k);
+            }
+            const modeText = mode.length > 0 ? mode.join(', ') : 'Tidak ada';
+
+            // Range
+            const range = sorted[sorted.length - 1] - sorted[0];
+
+            document.getElementById('res-mean').innerText = mean;
+            document.getElementById('res-median').innerText = median;
+            document.getElementById('res-mode').innerText = modeText;
+            document.getElementById('res-range').innerText = range;
+        }
+
+        // Adventure System Logic
+        let activeModalLevel = null;
+        let activeModalDiff = null;
+
+        function openAdventureTask(level, diff) {
+            const key = `lvl${level}_${diff}`;
+            
+            // Lock Check
+            if (level === 1 && diff === 'sedang' && !adventureState.lvl1_mudah) return;
+            if (level === 1 && diff === 'sulit' && !adventureState.lvl1_sedang) return;
+            if (level === 2 && diff === 'mudah' && !adventureState.lvl1_sulit) return;
+            if (level === 2 && diff === 'sedang' && !adventureState.lvl2_mudah) return;
+            if (level === 2 && diff === 'sulit' && !adventureState.lvl2_sedang) return;
+            if (level === 3 && diff === 'mudah' && !adventureState.lvl2_sulit) return;
+            if (level === 3 && diff === 'sedang' && !adventureState.lvl3_mudah) return;
+            if (level === 3 && diff === 'sulit' && !adventureState.lvl3_sedang) return;
+
+            activeModalLevel = level;
+            activeModalDiff = diff;
+
+            const task = adventureData[level][diff];
+            document.getElementById('modal-task-title').innerText = `LEVEL ${level} - TANTANGAN ${diff.toUpperCase()}`;
+            document.getElementById('modal-task-question').innerHTML = task.q;
+            document.getElementById('modal-task-feedback').innerText = '';
+
+            const optionsContainer = document.getElementById('modal-task-options');
+            optionsContainer.innerHTML = '';
+
+            task.options.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.className = "w-full p-4 rounded-xl border border-slate-200 hover:border-sky-500 hover:bg-sky-50 text-left text-sm font-semibold transition flex items-center space-x-3";
+                btn.innerHTML = `<span class="w-7 h-7 rounded-lg bg-slate-200 text-slate-700 flex items-center justify-center font-bold text-xs">${String.fromCharCode(65 + idx)}</span><span>${opt}</span>`;
+                btn.onclick = () => checkAdventureAnswer(idx);
+                optionsContainer.appendChild(btn);
+            });
+
+            document.getElementById('adventure-modal').classList.remove('hidden');
+        }
+
+        function closeAdventureModal() {
+            document.getElementById('adventure-modal').classList.add('hidden');
+        }
+
+        function checkAdventureAnswer(selectedIdx) {
+            const task = adventureData[activeModalLevel][activeModalDiff];
+            const feedbackEl = document.getElementById('modal-task-feedback');
+
+            if (selectedIdx === task.answer) {
+                feedbackEl.className = "text-sm font-bold text-emerald-600";
+                feedbackEl.innerHTML = "<i class='fa-solid fa-circle-check mr-1'></i> Jawaban Benar! Tantangan Terbuka.";
+                adventureState[`lvl${activeModalLevel}_${activeModalDiff}`] = true;
+
+                updateAdventureUI();
+
+                setTimeout(() => {
+                    closeAdventureModal();
+                }, 1200);
+            } else {
+                feedbackEl.className = "text-sm font-bold text-rose-600";
+                feedbackEl.innerHTML = "<i class='fa-solid fa-circle-xmark mr-1'></i> Jawaban kurang tepat. Coba hitung kembali!";
+            }
+        }
+
+        function updateAdventureUI() {
+            let completedCount = 0;
+            const keys = Object.keys(adventureState);
+
+            keys.forEach(k => {
+                if (adventureState[k]) completedCount++;
+            });
+
+            // Update Progress Bar
+            const percent = Math.round((completedCount / 9) * 100);
+            document.getElementById('adventure-progress-bar').style.width = `${percent}%`;
+            document.getElementById('adventure-progress-text').innerText = `${completedCount} / 9 Tantangan`;
+
+            // Helper button status updater
+            function setButtonStatus(lvl, diff, isUnlocked, isDone) {
+                const btn = document.getElementById(`btn-lvl-${lvl}-${diff}`);
+                const statusSpan = document.getElementById(`status-${lvl}-${diff}`);
+
+                if (isDone) {
+                    btn.className = "w-full py-3 px-4 rounded-xl text-xs font-bold flex items-center justify-between transition bg-emerald-600 text-white shadow";
+                    statusSpan.innerHTML = '<i class="fa-solid fa-check-double"></i>';
+                } else if (isUnlocked) {
+                    btn.className = "w-full py-3 px-4 rounded-xl text-xs font-bold flex items-center justify-between transition bg-sky-600 text-white hover:bg-sky-700 shadow pulse-btn";
+                    statusSpan.innerHTML = '<i class="fa-solid fa-play"></i>';
+                } else {
+                    btn.className = "w-full py-3 px-4 rounded-xl text-xs font-bold flex items-center justify-between transition bg-slate-200 text-slate-500 cursor-not-allowed";
+                    statusSpan.innerHTML = '<i class="fa-solid fa-lock"></i>';
+                }
+            }
+
+            setButtonStatus(1, 'mudah', true, adventureState.lvl1_mudah);
+            setButtonStatus(1, 'sedang', adventureState.lvl1_mudah, adventureState.lvl1_sedang);
+            setButtonStatus(1, 'sulit', adventureState.lvl1_sedang, adventureState.lvl1_sulit);
+
+            setButtonStatus(2, 'mudah', adventureState.lvl1_sulit, adventureState.lvl2_mudah);
+            setButtonStatus(2, 'sedang', adventureState.lvl2_mudah, adventureState.lvl2_sedang);
+            setButtonStatus(2, 'sulit', adventureState.lvl2_sedang, adventureState.lvl2_sulit);
+
+            setButtonStatus(3, 'mudah', adventureState.lvl2_sulit, adventureState.lvl3_mudah);
+            setButtonStatus(3, 'sedang', adventureState.lvl3_mudah, adventureState.lvl3_sedang);
+            setButtonStatus(3, 'sulit', adventureState.lvl3_sedang, adventureState.lvl3_sulit);
+        }
+
+        // HOTS Quiz Logic
+        function renderHotsQuestion() {
+            const q = hotsDatabase[currentHotsIndex];
+            document.getElementById('hots-question-number').innerText = `Soal ${currentHotsIndex + 1} dari ${hotsDatabase.length}`;
+            document.getElementById('hots-question-text').innerHTML = q.q;
+
+            const container = document.getElementById('hots-options-container');
+            container.innerHTML = '';
+            document.getElementById('hots-feedback').innerText = '';
+            document.getElementById('btn-next-hots').classList.add('hidden');
+
+            q.options.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.className = "hots-opt-btn w-full p-4 rounded-2xl border border-slate-200 hover:border-indigo-500 hover:bg-indigo-50/50 text-left text-sm font-semibold transition flex items-center justify-between";
+                btn.innerHTML = `
+                    <div class="flex items-center space-x-3">
+                        <span class="w-8 h-8 rounded-xl bg-slate-100 text-indigo-700 flex items-center justify-center font-bold text-xs border border-slate-200">${String.fromCharCode(65 + idx)}</span>
+                        <span>${opt}</span>
+                    </div>
+                `;
+                btn.onclick = () => selectHotsAnswer(idx);
+                container.appendChild(btn);
+            });
+        }
+
+        function selectHotsAnswer(selectedIdx) {
+            const q = hotsDatabase[currentHotsIndex];
+            const feedback = document.getElementById('hots-feedback');
+            const btns = document.querySelectorAll('.hots-opt-btn');
+
+            btns.forEach(b => b.disabled = true);
+
+            if (selectedIdx === q.answer) {
+                feedback.className = "text-sm font-bold text-emerald-600";
+                feedback.innerHTML = `<i class="fa-solid fa-circle-check mr-1"></i> Benar! ${q.explain}`;
+                if (hotsAnswers[currentHotsIndex] === undefined) {
+                    hotsScore += 20; // 5 soal x 20 = 100
+                    hotsAnswers[currentHotsIndex] = true;
+                }
+            } else {
+                feedback.className = "text-sm font-bold text-rose-600";
+                feedback.innerHTML = `<i class="fa-solid fa-circle-xmark mr-1"></i> Kurang Tepat. ${q.explain}`;
+                if (hotsAnswers[currentHotsIndex] === undefined) {
+                    hotsAnswers[currentHotsIndex] = false;
+                }
+            }
+
+            document.getElementById('hots-score-display').innerText = hotsScore;
+            document.getElementById('btn-next-hots').classList.remove('hidden');
+        }
+
+        function nextHotsQuestion() {
+            if (currentHotsIndex < hotsDatabase.length - 1) {
+                currentHotsIndex++;
+                renderHotsQuestion();
+            } else {
+                alert(`Tantangan HOTS Selesai! Skor Anda: ${hotsScore}`);
+                switchTab('refleksi');
+            }
+        }
+
+        // Certificate Status Logic
+        function updateCertificateStatus() {
+            const statusBox = document.getElementById('certificate-status-box');
+            const certPrintable = document.getElementById('printable-certificate');
+            const btnPrint = document.getElementById('btn-print-cert');
+
+            const today = new Date().toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' });
+            document.getElementById('cert-date').innerText = today;
+            document.getElementById('cert-score').innerText = hotsScore;
+
+            if (hotsScore >= 80) {
+                statusBox.className = "p-6 rounded-2xl bg-emerald-50 border border-emerald-300 text-emerald-900";
+                statusBox.innerHTML = `
+                    <i class="fa-solid fa-trophy text-4xl text-amber-500 mb-2 block"></i>
+                    <h4 class="font-heading font-bold text-lg">SELAMAT! ANDA LULUS KKM (Skor: ${hotsScore})</h4>
+                    <p class="text-xs text-emerald-700 mt-1">Sertifikat digital telah diterbitkan di bawah ini.</p>
+                `;
+                certPrintable.classList.remove('hidden');
+                btnPrint.classList.remove('hidden');
+
+                // Trigger celebration confetti
+                confetti({
+                    particleCount: 100,
+                    spread: 70,
+                    origin: { y: 0.6 }
+                });
+            } else {
+                statusBox.className = "p-6 rounded-2xl bg-amber-50 border border-amber-300 text-amber-900";
+                statusBox.innerHTML = `
+                    <i class="fa-solid fa-circle-exclamation text-4xl text-amber-500 mb-2 block"></i>
+                    <h4 class="font-heading font-bold text-lg">Skor HOTS Saat Ini: ${hotsScore} / 100 (KKM = 80)</h4>
+                    <p class="text-xs text-amber-800 mt-1">Anda belum memenuhi nilai standar KKM. Silakan ulangi Tantangan HOTS untuk mengklaim sertifikat.</p>
+                    <button onclick="switchTab('hots')" class="mt-4 px-6 py-2.5 bg-amber-600 text-white font-bold text-xs rounded-xl hover:bg-amber-700 transition">Ulangi Tantangan HOTS</button>
+                `;
+                certPrintable.classList.add('hidden');
+                btnPrint.classList.add('hidden');
+            }
+        }
+
+        // Initializer
+        window.onload = function() {
+            calculateSingleData();
+            updateAdventureUI();
+        };
+    </script>
+</body>
+</html>
